@@ -75,6 +75,22 @@ class Piratebay:
         )
         # self.menu="Top Audiobooks"
         return self._extract_data(response)
+    def get_top_music(self) -> List[Dict[str, Any]]:
+        """
+        Fetch the Top 100 Music torrents from apibay.org.
+        Category 101 = Music.
+        """
+        try:
+            response = requests.get(
+                f"{self.link}precompiled/data_top100_101.json",
+                headers=self.headers
+            )
+            return self._extract_data(response)
+        except Exception as e:
+            print(f"[Piratebay] Error fetching top music: {e}")
+            return []
+
+
 
 
 if __name__ == "__main__":

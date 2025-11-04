@@ -72,6 +72,21 @@ class Glo:
         )
         return self._extract_data(params)
 
+    def get_top_music(self):
+        """
+        Fetch top Music torrents (including FLAC/lossless) from gtdb.cc.
+        Category 5 = Music.
+        """
+        params = (
+            ("search", ""),
+            ("cat", "5"),
+            ("incldead", "0"),
+            ("inclexternal", "0"),
+            ("lang", "0"),
+            ("sort", "seeders"),
+            ("order", "desc"),
+        )
+        return self._extract_data(params)
 
     def search(self, search: str) -> List[Dict[str, Any]]:
         params = (

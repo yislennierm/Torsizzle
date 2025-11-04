@@ -24,7 +24,8 @@ class Torrent:
         "[3] Top Movies",
         "[4] Top Anime",
         "[5] Top Audiobooks",
-        "[6] Exit",
+        "[6] Top Music",
+        "[7] Exit",
     ]
             
         menu = "Welcome to Torsizzle, Pick one option to continue"
@@ -61,13 +62,14 @@ class Torrent:
     def main_menu_logic(self, selected):
         if selected == 0:
             self.search_menu()
-        elif selected == 5:
+        elif selected == 6:
             self.quit() 
         selected_option:Dict[int,function] = {
             1: self.controller.get_top_series,
             2: self.controller.get_top_movies,
             3: self.controller.get_top_anime,
             4: self.controller.get_top_audiobooks,
+            5: self.controller.get_top_flacmusic,
         }
         self.main_menu_selection(selected_option[selected])
         
@@ -100,9 +102,24 @@ class Torrent:
         self.stream(name=str(data[selected_2]["name"]).replace("."," ").replace("  "," "), info_hash=info_hash)
         
     def _player(self, arg0, name, info_hash, command) -> None:
+        import subprocess, os
+
         print(arg0.format(name))
-        com = command + info_hash
-        os.system(com)
+        cmd = command.split() + [info_hash]
+
+        # Copy environment and suppress Node warnings
+        env = os.environ.copy()
+        env["NODE_NO_WARNINGS"] = "1"
+
+        # Launch webtorrent interactively (attached to the terminal)
+        subprocess.Popen(
+            cmd,
+            env=env,
+            stdout=None,  # inherit parent's stdout
+            stderr=None,  # inherit parent's stderr
+            stdin=None,   # allow user interrupts (Ctrl+C)
+        ).wait()
+
         
 
 if __name__ == '__main__':

@@ -73,6 +73,38 @@ class Controller:
         results = glo_dict + piratebay_dict + the_1377x_dict
         return self._helper(results)
 
+    def get_top_flacmusic(self) -> List[Dict[str, Any]]:
+        """
+        Retrieve top FLAC music torrents by combining available sources.
+        Automatically skips sources that don't implement get_top_music().
+        """
+        results = []
+
+        # Loop through all possible sources safely
+        for src in [self.piratebay, self.glo, self.the_1377x]:
+            get_music = getattr(src, "get_top_music", None)
+            if callable(get_music):
+                try:
+                    results += get_music() or []
+                except Exception as e:
+                    print(f"[WARN] {src.__class__.__name__} get_top_music failed: {e}")
+            else:
+                print(f"[INFO] {src.__class__.__name__} has no get_top_music() — skipped.")
+
+        # Filter only FLAC or lossless results
+        flac_results = [
+            r for r in results
+            if "flac" in r.get("name", "").lower() or "lossless" in r.get("name", "").lower()
+        ]
+
+        if flac_results:
+            print(f"[INFO] Found {len(flac_results)} FLAC/lossless torrents.")
+            return self._helper(flac_results)
+
+        print("[INFO] No FLAC torrents found — returning all music results.")
+        return self._helper(results)
+   
+
     def get_top_movies(self) -> List[Dict[str, Any]]:
         glo_dict = self.glo.get_top_movies() or []
         piratebay_dict = self.piratebay.get_top_movies() or []
