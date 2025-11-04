@@ -76,7 +76,7 @@ class Torrent:
     def main_menu_logic2(self, name, info_hash, selected):
         if selected == 0:
             self._player(
-                "Playing {}......", name, info_hash, "webtorrent --mpv --quiet "
+                "Playing {}......", name, info_hash, "webtorrent --playlist --mpv --quiet "
             )
         elif selected == 1:
             self._player(
